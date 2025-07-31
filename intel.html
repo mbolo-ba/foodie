@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buffet Plate Builder</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        /* Style for disabled sections */
+        .section-disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(50%);
+        }
+        /* Custom styles for auto-selected items */
+        .auto-selected {
+            background-color: #e5e7eb; /* Muted gray for auto-select in the light theme */
+            pointer-events: none;
+            border-color: #d1d5db;
+            opacity: 0.7;
+        }
+        .auto-selected input:checked {
+            accent-color: #9ca3af; /* Gray color for the checkbox/radio button itself */
+        }
+        .auto-selected span {
+            color: #4b5563; /* Gray text color */
+        }
+        /* Color overrides for the new bright theme */
+        input[type="radio"][name="base"]:checked {
+            accent-color: #3b82f6; /* Blue for base */
+        }
+        input[type="radio"][name="sauce"]:checked {
+            accent-color: #ef4444; /* Red for sauce */
+        }
+        input[type="checkbox"][name="protein"]:checked {
+            accent-color: #10b981; /* Green for protein */
+        }
+        input[type="checkbox"][name="side"]:checked {
+            accent-color: #f59e0b; /* Yellow for sides */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-2xl lg:max-w-4xl transform transition-all duration-300 hover:scale-[1.01]">
+        <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-8 tracking-tight">
+            Build Your Plate! 🍽️
+        </h1>
+        <p id="userIdDisplay" class="text-xs text-gray-500 text-center mb-4">You are viewing a public feed. Your User ID is:</p>
+
+        <form id="buffetForm" class="space-y-8">
+            <!-- Base Section -->
+            <div class="bg-blue-100 p-6 rounded-lg shadow-md border border-blue-300">
+                <h2 class="text-2xl font-semibold text-blue-800 mb-4 flex items-center">
+                    <span class="mr-3 text-blue-500">🍚</span> Choose Your Base (Pick One)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="baseOptions">
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="White Rice" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">White Rice</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Waakye" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Waakye</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Fried Rice" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Fried Rice</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Banku" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Banku</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Yam" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Yam</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Omotuo" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Omotuo</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Jollof Rice" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Jollof Rice</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Plantain" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Plantain</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Kokonte" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Kokonte</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-blue-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="base" value="Fufu" class="form-radio h-5 w-5 focus:ring-blue-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Fufu</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Sauce Section -->
+            <div id="sauceSection" class="bg-red-100 p-6 rounded-lg shadow-md border border-red-300">
+                <h2 class="text-2xl font-semibold text-red-800 mb-4 flex items-center">
+                    <span class="mr-3 text-red-500">🌶️</span> Choose Your Sauce (Pick One)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="sauceOptions">
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-red-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="sauce" value="Palava sauce" class="form-radio h-5 w-5 focus:ring-red-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Palava sauce</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-red-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="sauce" value="Groundnut soup" class="form-radio h-5 w-5 focus:ring-red-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Groundnut soup</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-red-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="sauce" value="Pepper" class="form-radio h-5 w-5 focus:ring-red-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Pepper</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-red-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="sauce" value="Okro stew" class="form-radio h-5 w-5 focus:ring-red-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Okro stew</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-red-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="sauce" value="Light soup" class="form-radio h-5 w-5 focus:ring-red-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Light soup</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-red-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="sauce" value="Palmnut soup" class="form-radio h-5 w-5 focus:ring-red-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Palmnut soup</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-red-50 transition duration-200 ease-in-out">
+                        <input type="radio" name="sauce" value="Tomato stew" class="form-radio h-5 w-5 focus:ring-red-500 rounded-full">
+                        <span class="ml-3 text-lg text-gray-700">Tomato stew</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Protein Section -->
+            <div id="proteinSection" class="bg-green-100 p-6 rounded-lg shadow-md border border-green-300">
+                <h2 class="text-2xl font-semibold text-green-800 mb-4 flex items-center">
+                    <span class="mr-3 text-green-500">🍗</span> Choose Your Protein (<span id="proteinCount">Pick Up to Two</span>)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-green-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="protein" value="Chicken" class="form-checkbox h-5 w-5 focus:ring-green-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Chicken</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-green-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="protein" value="Tilapia" class="form-checkbox h-5 w-5 focus:ring-green-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Tilapia</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-green-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="protein" value="Egg" class="form-checkbox h-5 w-5 focus:ring-green-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Egg</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-green-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="protein" value="Fish" class="form-checkbox h-5 w-5 focus:ring-green-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Fish</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-green-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="protein" value="Goat" class="form-checkbox h-5 w-5 focus:ring-green-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Goat</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-green-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="protein" value="Crab (/wele)" class="form-checkbox h-5 w-5 focus:ring-green-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Crab (/wele)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Sides Section -->
+            <div id="sidesSection" class="bg-yellow-100 p-6 rounded-lg shadow-md border border-yellow-300">
+                <h2 class="text-2xl font-semibold text-yellow-800 mb-4 flex items-center">
+                    <span class="mr-3 text-yellow-500">🥔</span> Choose Your Sides (Pick Up to Two)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-yellow-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="side" value="Gari, spaghetti, veggies" class="form-checkbox h-5 w-5 focus:ring-yellow-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Gari, spaghetti, veggies</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-yellow-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="side" value="Coleslaw" class="form-checkbox h-5 w-5 focus:ring-yellow-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Coleslaw</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-yellow-50 transition duration-200 ease-in-out">
+                        <input type="checkbox" name="side" value="Veggies" class="form-checkbox h-5 w-5 focus:ring-yellow-500 rounded">
+                        <span class="ml-3 text-lg text-gray-700">Veggies</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg hover:from-indigo-600 hover:to-purple-700 transform transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300">
+                Build & Save My Plate!
+            </button>
+        </form>
+        
+        <!-- Saved Plates History Section -->
+        <div class="mt-10 pt-6 border-t-2 border-gray-200">
+            <h2 id="savedPlatesHeader" class="text-3xl font-bold text-gray-900 mb-6 text-center"></h2>
+            <div id="savedPlatesList" class="space-y-6">
+                <!-- Saved plates will be dynamically inserted here -->
+                <p id="loadingMessage" class="text-center text-gray-500">Loading saved plates...</p>
+                <p id="noPlatesMessage" class="text-center text-gray-500 hidden">No one has saved any plates yet.</p>
+            </div>
+        </div>
+
+        <!-- Custom Modal for Messages -->
+        <div id="messageModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+            <div class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full text-center transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4" id="modalTitle"></h3>
+                <p class="text-gray-700 mb-6" id="modalMessage"></p>
+                <button id="closeModalButton" class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Got It!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, onSnapshot, collection, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let firebaseConfig = {};
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        } catch (error) {
+            console.error("Error parsing firebaseConfig:", error);
+        }
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // Initialize Firebase
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (error) {
+            console.error("Firebase initialization failed:", error);
+            showModal("Initialization Error", "Failed to initialize Firebase. The application will not work. Please contact support.");
+        }
+
+
+        // UI Element references
+        const buffetForm = document.getElementById('buffetForm');
+        const plateSummary = document.getElementById('plateSummary');
+        const messageModal = document.getElementById('messageModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const proteinCountSpan = document.getElementById('proteinCount');
+        const savedPlatesList = document.getElementById('savedPlatesList');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const noPlatesMessage = document.getElementById('noPlatesMessage');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const savedPlatesHeader = document.getElementById('savedPlatesHeader');
+
+        // Get references to sections and their inputs
+        const proteinSection = document.getElementById('proteinSection');
+        const sidesSection = document.getElementById('sidesSection');
+        const sauceSection = document.getElementById('sauceSection');
+
+        const baseRadioButtons = document.querySelectorAll('input[name="base"]');
+        const proteinCheckboxes = document.querySelectorAll('input[name="protein"]');
+        const sideCheckboxes = document.querySelectorAll('input[name="side"]');
+        const sauceRadioButtons = document.querySelectorAll('input[name="sauce"]');
+
+        let isAuthReady = false;
+        let userId = null;
+        let isHost = false;
+
+        // The userId of the designated host. This is set to your current userId for this example.
+        // You can change this ID to designate a different host.
+        const hostId = "y5t1jS1y64m3HkR2n7T6m9C0o2"; 
+
+        /**
+         * Signs the user in using the custom token or anonymously.
+         * @returns {Promise<void>}
+         */
+        async function signIn() {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase authentication failed:", error);
+                // Inform the user about the authentication failure using the custom modal
+                showModal("Authentication Error", "Failed to sign in. The application may not work correctly. Please try refreshing the page.");
+            }
+        }
+
+        /**
+         * Sets up real-time listener for saved plates in Firestore.
+         */
+        function setupFirestoreListener() {
+            if (!isAuthReady || !userId) {
+                console.log("Authentication not ready. Skipping Firestore listener setup.");
+                return;
+            }
+            console.log("Setting up Firestore listener for user:", userId);
+
+            const collectionPath = `/artifacts/${appId}/public/data/all_plates`;
+            const platesCollection = collection(db, collectionPath);
+            
+            let platesQuery;
+            if (isHost) {
+                // If the user is the host, query all plates.
+                platesQuery = query(platesCollection);
+                savedPlatesHeader.textContent = 'All Saved Plates (Host View)';
+            } else {
+                // For all other users, query only their own plates.
+                platesQuery = query(platesCollection, where('userId', '==', userId));
+                savedPlatesHeader.textContent = 'My Saved Plates';
+            }
+
+            onSnapshot(platesQuery, (snapshot) => {
+                const plates = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    plates.push({ id: doc.id, ...data });
+                });
+                renderSavedPlates(plates);
+            }, (error) => {
+                // The original error you reported often happens here if the initial connection fails.
+                console.error("Error fetching documents: ", error);
+                showModal('Database Error', 'Could not load saved plates. This may be due to a temporary network issue. The app will try again automatically.');
+            });
+        }
+
+        /**
+         * Renders the list of saved plates to the UI.
+         * @param {Array} plates - The array of plate objects from Firestore.
+         */
+        function renderSavedPlates(plates) {
+            savedPlatesList.innerHTML = ''; // Clear the list
+            loadingMessage.classList.add('hidden');
+
+            if (plates.length === 0) {
+                noPlatesMessage.classList.remove('hidden');
+                noPlatesMessage.textContent = isHost ? 'No one has saved any plates yet.' : 'You have not saved any plates yet.';
+                return;
+            } else {
+                noPlatesMessage.classList.add('hidden');
+            }
+
+            // Sort plates by timestamp in descending order (most recent first)
+            const sortedPlates = plates.sort((a, b) => b.timestamp?.seconds - a.timestamp?.seconds);
+
+            sortedPlates.forEach(plate => {
+                const plateElement = document.createElement('div');
+                plateElement.className = 'bg-white p-4 rounded-lg shadow-md border border-gray-200';
+
+                // Format the timestamp
+                let timestampText = 'Just now';
+                if (plate.timestamp && plate.timestamp.seconds) {
+                    const date = new Date(plate.timestamp.seconds * 1000);
+                    timestampText = date.toLocaleString();
+                }
+
+                plateElement.innerHTML = `
+                    <p class="text-sm text-gray-500 mb-2">Saved by: <span class="font-mono text-gray-800">${plate.userId}</span> at ${timestampText}</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li><span class="font-semibold">Base:</span> ${plate.base}</li>
+                        <li><span class="font-semibold">Sauce:</span> ${plate.sauce || 'N/A'}</li>
+                        <li><span class="font-semibold">Protein:</span> ${plate.proteins.join(', ') || 'None selected'}</li>
+                        <li><span class="font-semibold">Sides:</span> ${plate.sides.join(', ') || 'N/A'}</li>
+                    </ul>
+                `;
+                savedPlatesList.appendChild(plateElement);
+            });
+        }
+
+        /**
+         * Displays a custom modal message to the user.
+         * @param {string} title - The title of the modal.
+         * @param {string} message - The message content of the modal.
+         */
+        function showModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            messageModal.classList.remove('hidden');
+            // Animate modal in
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        /**
+         * Hides the custom modal.
+         */
+        function hideModal() {
+            // Animate modal out
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                messageModal.classList.add('hidden');
+            }, 300); // Match CSS transition duration
+        }
+
+        // Close modal when the button is clicked
+        closeModalButton.addEventListener('click', hideModal);
+        
+        // Wait for auth state to be ready before doing anything else
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                isAuthReady = true;
+                userId = user.uid;
+                // Check if the current user is the host
+                isHost = (userId === hostId);
+                userIdDisplay.innerHTML = `Your User ID is: <span class="font-mono text-gray-800">${userId}</span>${isHost ? ' (You are the host)' : ''}`;
+                setupFirestoreListener(); // Start listening for data
+            } else {
+                isAuthReady = false;
+                await signIn(); // Try to sign in
+            }
+        });
+
+
+        /**
+         * Resets all auto-selected styles and disabled states on the entire form.
+         */
+        function resetAllStyles() {
+            document.querySelectorAll('.auto-selected').forEach(el => {
+                el.classList.remove('auto-selected');
+            });
+            sauceSection.classList.remove('section-disabled');
+            proteinSection.classList.remove('section-disabled');
+            sidesSection.classList.remove('section-disabled');
+        }
+
+        /**
+         * Applies the auto-selected style to an input's parent label.
+         * @param {HTMLElement} input - The input element to style.
+         */
+        function applyAutoSelectedStyle(input) {
+             const label = input.closest('label');
+             if (label) {
+                label.classList.add('auto-selected');
+             }
+        }
+
+
+        /**
+         * Updates the enabled/disabled state of all sections based on selections.
+         * This is the single source of truth for the UI state.
+         */
+        function updateUIState() {
+            const selectedBase = document.querySelector('input[name="base"]:checked')?.value;
+            let selectedSauce = document.querySelector('input[name="sauce"]:checked')?.value;
+
+            // --- 1. Full reset of all sections ---
+            resetAllStyles();
+            // Reset all input disabled states
+            document.querySelectorAll('input').forEach(input => input.disabled = false);
+
+            // --- 2. Apply rules based on selectedBase and selectedSauce ---
+            if (selectedBase === 'Waakye') {
+                // Sauce: disabled
+                sauceSection.classList.add('section-disabled');
+                sauceRadioButtons.forEach(radio => {
+                    radio.disabled = true;
+                    radio.checked = false;
+                });
+                // Protein: Only Chicken and Fish can be selected
+                proteinCheckboxes.forEach(checkbox => {
+                    if (checkbox.value !== 'Chicken' && checkbox.value !== 'Fish') {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    }
+                });
+                // Sides: Only Gari, spaghetti, veggies is auto-selected
+                sideCheckboxes.forEach(checkbox => {
+                    if (checkbox.value !== 'Gari, spaghetti, veggies') {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    } else {
+                        checkbox.checked = true;
+                        applyAutoSelectedStyle(checkbox);
+                    }
+                });
+            }
+            else if (selectedBase === 'Fried Rice' || selectedBase === 'Jollof Rice') {
+                // Sauce: disabled
+                sauceSection.classList.add('section-disabled');
+                sauceRadioButtons.forEach(radio => {
+                    radio.disabled = true;
+                    radio.checked = false;
+                });
+                // Protein: Only Chicken and Fish can be selected
+                proteinCheckboxes.forEach(checkbox => {
+                    if (checkbox.value !== 'Chicken' && checkbox.value !== 'Fish') {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    }
+                });
+                // Sides: Only Coleslaw can be selected
+                sideCheckboxes.forEach(checkbox => {
+                    if (checkbox.value !== 'Coleslaw') {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    }
+                });
+            }
+            // New logic for White Rice
+            else if (selectedBase === 'White Rice') {
+                // Sauce: Tomato stew is mandatory
+                sauceRadioButtons.forEach(radio => {
+                    radio.disabled = true;
+                    radio.checked = false;
+                    if (radio.value === 'Tomato stew') {
+                        radio.disabled = false;
+                        radio.checked = true;
+                        applyAutoSelectedStyle(radio);
+                        selectedSauce = 'Tomato stew';
+                    }
+                });
+                // Protein: Only Chicken and Fish can be selected
+                proteinCheckboxes.forEach(checkbox => {
+                    if (checkbox.value !== 'Chicken' && checkbox.value !== 'Fish') {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    }
+                });
+                // Sides: Only Coleslaw can be selected
+                sideCheckboxes.forEach(checkbox => {
+                    if (checkbox.value !== 'Coleslaw') {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    }
+                });
+            }
+            // New logic for Fufu
+            else if (selectedBase === 'Fufu') {
+                // Sauce: Light soup is mandatory and auto-selected
+                sauceRadioButtons.forEach(radio => {
+                    radio.disabled = true;
+                    radio.checked = false;
+                    if (radio.value === 'Light soup') {
+                        radio.disabled = false;
+                        radio.checked = true;
+                        applyAutoSelectedStyle(radio);
+                        selectedSauce = 'Light soup';
+                    }
+                });
+                // Protein: Only Tilapia, Goat, or Chicken can be selected
+                proteinCheckboxes.forEach(checkbox => {
+                    if (checkbox.value !== 'Tilapia' && checkbox.value !== 'Goat' && checkbox.value !== 'Chicken') {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false; // Uncheck invalid protein
+                    }
+                });
+                // Sides: Disabled
+                sidesSection.classList.add('section-disabled');
+                sideCheckboxes.forEach(checkbox => {
+                    checkbox.disabled = true;
+                    if (checkbox.checked) checkbox.checked = false;
+                });
+            }
+            // Base-specific rules (highest precedence)
+            else if (selectedBase === 'Omotuo' || selectedBase === 'Kokonte') {
+                // Sauce: Only Groundnut soup or Palmnut soup
+                sauceRadioButtons.forEach(radio => {
+                    if (radio.value !== 'Groundnut soup' && radio.value !== 'Palmnut soup') {
+                        radio.disabled = true;
+                        if (radio.checked) radio.checked = false; // Uncheck invalid sauce
+                    }
+                });
+                // Protein: Only Chicken or Goat
+                proteinCheckboxes.forEach(checkbox => {
+                    if (checkbox.value !== 'Chicken' && checkbox.value !== 'Goat') {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false; // Uncheck invalid protein
+                    }
+                });
+                // Sides: Disabled
+                sidesSection.classList.add('section-disabled');
+                sideCheckboxes.forEach(checkbox => {
+                    checkbox.disabled = true;
+                    if (checkbox.checked) checkbox.checked = false;
+                });
+            } else if (selectedBase === 'Plantain' || selectedBase === 'Yam') {
+                // Sauce: Palava sauce is mandatory and auto-selected
+                sauceRadioButtons.forEach(radio => {
+                    radio.disabled = true;
+                    radio.checked = false;
+                    if (radio.value === 'Palava sauce') {
+                        radio.disabled = false;
+                        radio.checked = true;
+                        applyAutoSelectedStyle(radio);
+                        selectedSauce = 'Palava sauce';
+                    }
+                });
+                // Protein: Egg and Fish are mandatory and auto-selected
+                proteinCheckboxes.forEach(checkbox => {
+                    checkbox.disabled = true;
+                    checkbox.checked = false;
+                    if (checkbox.value === 'Egg' || checkbox.value === 'Fish') {
+                        checkbox.checked = true;
+                        applyAutoSelectedStyle(checkbox);
+                    }
+                });
+                // Sides: Disabled
+                sidesSection.classList.add('section-disabled');
+                sideCheckboxes.forEach(checkbox => {
+                    checkbox.disabled = true;
+                    if (checkbox.checked) checkbox.checked = false;
+                });
+            } else if (selectedBase === 'Banku') {
+                // Sauce: Only Pepper or Okro stew enabled
+                sauceRadioButtons.forEach(radio => {
+                    if (radio.value !== 'Pepper' && radio.value !== 'Okro stew') {
+                        radio.disabled = true;
+                        if (radio.checked) radio.checked = false;
+                    }
+                });
+
+                // Nested rules for Banku based on selected sauce
+                const bankuSelectedSauce = document.querySelector('input[name="sauce"]:checked')?.value;
+                if (bankuSelectedSauce === 'Pepper') {
+                    // Protein: Tilapia is mandatory and auto-selected
+                    proteinCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        checkbox.checked = false;
+                        if (checkbox.value === 'Tilapia') {
+                            checkbox.checked = true;
+                            applyAutoSelectedStyle(checkbox);
+                        }
+                    });
+                    // Sides: Only Veggies enabled
+                    sidesSection.classList.remove('section-disabled'); // Ensure it's not disabled
+                    sideCheckboxes.forEach(checkbox => {
+                        if (checkbox.value === 'Veggies') {
+                            checkbox.disabled = false;
+                        } else {
+                            checkbox.checked = false;
+                            checkbox.disabled = true;
+                        }
+                    });
+                } else if (bankuSelectedSauce === 'Okro stew') {
+                    // Protein: Fish and Crab (/wele) are mandatory and auto-selected
+                    proteinCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        checkbox.checked = false;
+                        if (checkbox.value === 'Fish' || checkbox.value === 'Crab (/wele)') {
+                            checkbox.checked = true;
+                            applyAutoSelectedStyle(checkbox);
+                        }
+                    });
+                    // Sides: Disabled
+                    sidesSection.classList.add('section-disabled');
+                    sideCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    });
+                } else { // Banku is selected but no specific sauce is chosen yet
+                     proteinSection.classList.add('section-disabled');
+                     sidesSection.classList.add('section-disabled');
+                }
+            }
+            // General rules based on selectedSauce (lower precedence)
+            else {
+                if (selectedSauce === 'Okro stew') {
+                     // Protein: Fish is mandatory and auto-selected
+                    proteinCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        checkbox.checked = false;
+                        if (checkbox.value === 'Fish') {
+                            checkbox.checked = true;
+                            applyAutoSelectedStyle(checkbox);
+                        }
+                    });
+                    // Sides: Disabled
+                    sidesSection.classList.add('section-disabled');
+                    sideCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    }
+                    );
+                } else if (selectedSauce === 'Palava sauce') {
+                     // Protein: Egg and Fish are mandatory and auto-selected
+                    proteinCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        checkbox.checked = false;
+                        if (checkbox.value === 'Egg' || checkbox.value === 'Fish') {
+                            checkbox.checked = true;
+                            applyAutoSelectedStyle(checkbox);
+                        }
+                    });
+                     // Sides: Disabled
+                    sidesSection.classList.add('section-disabled');
+                    sideCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        if (checkbox.checked) checkbox.checked = false;
+                    });
+                } else if (selectedSauce === 'Pepper') {
+                    // Protein: Tilapia is mandatory and auto-selected
+                    proteinCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        checkbox.checked = false;
+                        if (checkbox.value === 'Tilapia') {
+                            checkbox.checked = true;
+                            applyAutoSelectedStyle(checkbox);
+                        }
+                    });
+                }
+            }
+            
+            // Dynamically update protein count text in the heading
+            let maxAllowedProteins = 1;
+            if (selectedBase === 'Plantain' || selectedBase === 'Yam' || (selectedBase === 'Banku' && selectedSauce === 'Okro stew') || selectedSauce === 'Palava sauce') {
+                maxAllowedProteins = 2;
+            } else if (selectedBase === 'Waakye' || selectedBase === 'Fufu') {
+                maxAllowedProteins = 1; // Change to 1 for Waakye and Fufu
+            }
+            
+            proteinCountSpan.textContent = maxAllowedProteins > 1 ? `Pick Up to ${maxAllowedProteins}` : `Pick One`;
+
+        }
+
+        // Attach a single event listener to the form to handle all changes
+        buffetForm.addEventListener('change', (event) => {
+            const targetName = event.target.name;
+
+            // Handle checkbox limits
+            if (targetName === 'protein') {
+                const checkedCount = Array.from(proteinCheckboxes).filter(cb => cb.checked).length;
+                const selectedBase = document.querySelector('input[name="base"]:checked')?.value;
+                const selectedSauce = document.querySelector('input[name="sauce"]:checked')?.value;
+                
+                let maxAllowedProteins = 1; // Default
+                if (selectedBase === 'Plantain' || selectedBase === 'Yam' || selectedSauce === 'Palava sauce' || (selectedBase === 'Banku' && selectedSauce === 'Okro stew')) {
+                    maxAllowedProteins = 2;
+                } else if (selectedBase === 'Waakye' || selectedBase === 'Fufu') {
+                    maxAllowedProteins = 1; // Change to 1 for Waakye and Fufu
+                }
+
+                if (checkedCount > maxAllowedProteins) {
+                    event.target.checked = false;
+                    showModal('Selection Limit Reached', `You can only select up to ${maxAllowedProteins} protein(s) with this combination.`);
+                    return;
+                }
+            }
+             if (targetName === 'side') {
+                const checkedCount = Array.from(sideCheckboxes).filter(cb => cb.checked).length;
+                const selectedBase = document.querySelector('input[name="base"]:checked')?.value;
+                const selectedSauce = document.querySelector('input[name="sauce"]:checked')?.value;
+
+                let maxAllowedSides = 2; // Default
+                
+                if (['Omotuo', 'Kokonte', 'Plantain', 'Yam', 'Fried Rice', 'Jollof Rice', 'Fufu'].includes(selectedBase)) {
+                     maxAllowedSides = 0;
+                } else if (selectedBase === 'White Rice' || (selectedBase === 'Fried Rice' || selectedBase === 'Jollof Rice')) {
+                    maxAllowedSides = 1; // Only Coleslaw
+                } else if (selectedBase === 'Waakye') {
+                     maxAllowedSides = 1; // Only Gari, spaghetti, veggies
+                } else if (selectedBase === 'Banku' && selectedSauce === 'Pepper') {
+                    maxAllowedSides = 1; // Only Veggies
+                } else if (selectedBase === 'Banku' && selectedSauce === 'Okro stew') {
+                    maxAllowedSides = 0;
+                } else if (selectedSauce === 'Okro stew' || selectedSauce === 'Palava sauce') {
+                    maxAllowedSides = 0;
+                }
+
+                if (checkedCount > maxAllowedSides) {
+                    event.target.checked = false;
+                    showModal('Selection Limit Reached', `You can only select up to ${maxAllowedSides} side(s) with this combination.`);
+                    return;
+                }
+            }
+
+            // Update UI state after any change in the form
+            updateUIState();
+        });
+
+
+        buffetForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get selected items
+            const selectedBase = document.querySelector('input[name="base"]:checked')?.value;
+            const selectedSauce = document.querySelector('input[name="sauce"]:checked')?.value;
+            const selectedProteins = Array.from(document.querySelectorAll('input[name="protein"]:checked')).map(input => input.value);
+            const selectedSides = Array.from(document.querySelectorAll('input[name="side"]:checked')).map(input => input.value);
+
+            // --- Validation Logic ---
+            let isValid = true;
+            let errorMessage = '';
+
+            if (!selectedBase) {
+                errorMessage += 'Please choose a Base for your plate.\n';
+                isValid = false;
+            }
+             if (!selectedSauce && !['Plantain', 'Yam', 'Fried Rice', 'Jollof Rice', 'Waakye', 'Fufu'].includes(selectedBase)) {
+                errorMessage += 'Please choose a Sauce for your plate.\n';
+                isValid = false;
+            }
+
+            // Specific base/sauce combo validations
+            if (selectedBase === 'Fried Rice' || selectedBase === 'Jollof Rice') {
+                if (selectedSauce) {
+                    errorMessage += `With ${selectedBase}, you cannot choose a sauce.\n`;
+                    isValid = false;
+                }
+            } else if (selectedBase === 'Waakye') {
+                if (selectedSauce) {
+                    errorMessage += `With ${selectedBase}, you cannot choose a sauce.\n`;
+                    isValid = false;
+                }
+            } else if (selectedBase === 'Fufu') {
+                if (selectedSauce !== 'Light soup') {
+                    errorMessage += `With Fufu, you must choose Light soup.\n`;
+                    isValid = false;
+                }
+            } else if (selectedBase === 'White Rice') {
+                 if (selectedSauce !== 'Tomato stew') {
+                    errorMessage += `With White Rice, you must choose Tomato stew.\n`;
+                    isValid = false;
+                }
+            } else if (selectedBase === 'Omotuo' || selectedBase === 'Kokonte') {
+                if (!selectedSauce || !['Groundnut soup', 'Palmnut soup'].includes(selectedSauce)) {
+                    errorMessage += `With ${selectedBase}, you must choose either Groundnut soup or Palmnut soup.\n`;
+                    isValid = false;
+                }
+            } else if (selectedBase === 'Plantain' || selectedBase === 'Yam') {
+                if (selectedSauce !== 'Palava sauce') {
+                    errorMessage += `With ${selectedBase}, you must choose Palava sauce.\n`;
+                    isValid = false;
+                }
+            } else if (selectedBase === 'Banku') {
+                if (!selectedSauce || !['Pepper', 'Okro stew'].includes(selectedSauce)) {
+                    errorMessage += `With Banku, you must choose either Pepper or Okro stew as sauce.\n`;
+                    isValid = false;
+                }
+            }
+
+            // Protein validation
+            if (proteinSection.classList.contains('section-disabled')) {
+                if (selectedProteins.length > 0) {
+                    errorMessage += `Protein selection is not allowed with this combination.\n`;
+                    isValid = false;
+                }
+            } else if (selectedBase === 'Waakye') {
+                if (selectedProteins.length === 0) {
+                    errorMessage += `Please choose a protein with Waakye.\n`;
+                    isValid = false;
+                }
+                if (selectedProteins.length > 1) {
+                     errorMessage += `You can only choose one protein with Waakye.\n`;
+                     isValid = false;
+                }
+            } else if (selectedBase === 'Fufu') {
+                if (selectedProteins.length === 0) {
+                    errorMessage += `Please choose a protein with Fufu.\n`;
+                    isValid = false;
+                }
+                if (selectedProteins.length > 1) {
+                     errorMessage += `You can only choose one protein with Fufu.\n`;
+                     isValid = false;
+                }
+            } else if (selectedProteins.length === 0 && !((selectedBase === 'Plantain' || selectedBase === 'Yam') || (selectedBase === 'Banku' && selectedSauce === 'Okro stew') || selectedSauce === 'Okro stew' || selectedSauce === 'Palava sauce' || selectedSauce === 'Pepper')) {
+                errorMessage += 'Please choose at least one Protein.\n';
+                isValid = false;
+            }
+            
+            // Side validation
+            if (sidesSection.classList.contains('section-disabled')) {
+                if (selectedSides.length > 0) {
+                    errorMessage += `Side selection is not allowed with this combination.\n`;
+                    isValid = false;
+                }
+            } else if (selectedSides.length === 0 && !['White Rice', 'Banku', 'Fried Rice', 'Jollof Rice', 'Waakye', 'Fufu'].includes(selectedBase)) {
+                errorMessage += 'Please choose at least one Side.\n';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                showModal('Missing Selections', errorMessage.trim());
+                return; // Stop submission if validation fails
+            }
+
+            // --- Save to Firestore ---
+            if (!isAuthReady || !userId) {
+                showModal('Authentication Error', 'Please wait for the app to initialize before saving.');
+                return;
+            }
+
+            const plateData = {
+                userId: userId, // Include the userId in the saved data
+                base: selectedBase,
+                sauce: selectedSauce || null,
+                proteins: selectedProteins,
+                sides: selectedSides,
+                timestamp: serverTimestamp(),
+            };
+
+            // Public collection path for all users
+            const collectionPath = `/artifacts/${appId}/public/data/all_plates`;
+            try {
+                await addDoc(collection(db, collectionPath), plateData);
+                showModal('Success!', 'Your plate has been saved!');
+                buffetForm.reset(); // Reset form after successful save
+                updateUIState(); // Update UI state after resetting
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showModal('Error', 'Failed to save your plate. Please try again.');
+            }
+
+        });
+
+        // Initial call to set correct state on load
+        updateUIState();
+
+    </script>
+</body>
+</html>
